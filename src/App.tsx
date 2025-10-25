@@ -23,23 +23,26 @@ const Nav: React.FC = () => {
       <div className="container">
         <div className="navbar-brand">
           <Link to="/" className="navbar-item">
-            <h1 className="title is-4">MyApp</h1>
+            <span className="is-4 has-text-weight-bold">MyApp</span>
           </Link>
         </div>
 
         <div className="navbar-menu is-active">
           <div className="navbar-start">
-            <div className={`navbar-item ${isActive('/')}`} data-cy="NavLink">
-              <Link to="/" className="navbar-link">
+            <div className={`navbar-link ${isActive('/')}`} data-cy="NavLink">
+              <Link
+                to="/"
+                className={`navbar-link ${isActive('/')}`}
+                data-cy="NavLink"
+              >
                 Home
               </Link>
-            </div>
 
-            <div
-              className={`navbar-item ${isActive('/tabs')}`}
-              data-cy="NavLink"
-            >
-              <Link to="/tabs" className="navbar-link">
+              <Link
+                to="/tabs"
+                className={`navbar-link ${isActive('/tabs')}`}
+                data-cy="NavLink"
+              >
                 Tabs
               </Link>
             </div>

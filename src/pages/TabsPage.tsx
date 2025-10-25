@@ -1,8 +1,9 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Tab } from '../types/Tab';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
-const tabs: Tab[] = [
+const tabs = [
   { id: 'tab-1', title: 'Tab 1', content: 'Some text 1' },
   { id: 'tab-2', title: 'Tab 2', content: 'Some text 2' },
   { id: 'tab-3', title: 'Tab 3', content: 'Some text 3' },
@@ -10,26 +11,54 @@ const tabs: Tab[] = [
 
 export const TabsPage: React.FC = () => {
   const { tabId } = useParams<{ tabId?: string }>();
-  const activeTab = tabs.find(t => t.id === tabId);
+  const navigate = useNavigate();
+
+  const selectedIndex = tabs.findIndex(t => t.id === tabId);
+
+  const handleTabSelect = (index: number) => {
+    navigate(`/tabs/${tabs[index].id}`);
+  };
+
+  const isTabSelected = selectedIndex !== -1;
 
   return (
     <div>
       <h1 className="title">Tabs page</h1>
-      <ul className="tabs__list">
-        {tabs.map(tab => (
-          <li
-            key={tab.id}
-            data-cy="Tab"
-            className={tab.id === tabId ? 'is-active' : ''}
-          >
-            <Link to={`/tabs/${tab.id}`}>{tab.title}</Link>
-          </li>
-        ))}
-      </ul>
 
-      <div className="tabContent">
-        {activeTab ? <p>{activeTab.content}</p> : <p>Please select a tab</p>}
-      </div>
+      {tabs.length > 0 ? (
+        <Tabs
+          selectedIndex={isTabSelected ? selectedIndex : undefined}
+          onSelect={handleTabSelect}
+          className="tabs__wrapper"
+        >
+          <TabList className="tabs__list">
+            {tabs.map(tab => (
+              <Tab
+                key={tab.id}
+                className="tabs__item"
+                selectedClassName="tabs__item--selected"
+                data-cy="Tab"
+              >
+                {tab.title}
+              </Tab>
+            ))}
+          </TabList>
+
+          {isTabSelected ? (
+            <>
+              {tabs.map(tab => (
+                <TabPanel key={tab.id} className="tabs__panel">
+                  {tab.content}
+                </TabPanel>
+              ))}
+            </>
+          ) : (
+            <div className="tabs__content-placeholder">Please select a tab</div>
+          )}
+        </Tabs>
+      ) : (
+        <p>No tabs available.</p>
+      )}
     </div>
   );
 };
