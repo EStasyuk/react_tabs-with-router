@@ -1,6 +1,6 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { useParams, Link } from 'react-router-dom';
+import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
 const tabs = [
@@ -11,54 +11,33 @@ const tabs = [
 
 export const TabsPage: React.FC = () => {
   const { tabId } = useParams<{ tabId?: string }>();
-  const navigate = useNavigate();
 
-  const selectedIndex = tabs.findIndex(t => t.id === tabId);
-
-  const handleTabSelect = (index: number) => {
-    navigate(`/tabs/${tabs[index].id}`);
-  };
-
-  const isTabSelected = selectedIndex !== -1;
+  const foundTabIndex = tabs.findIndex(tab => tab.id === tabId);
+  const selectedIndex = foundTabIndex !== -1 ? foundTabIndex : undefined;
 
   return (
-    <div>
+    <div className="page">
       <h1 className="title">Tabs page</h1>
 
-      {tabs.length > 0 ? (
-        <Tabs
-          selectedIndex={isTabSelected ? selectedIndex : undefined}
-          onSelect={handleTabSelect}
-          className="tabs__wrapper"
-        >
-          <TabList className="tabs__list">
-            {tabs.map(tab => (
-              <Tab
-                key={tab.id}
-                className="tabs__item"
-                selectedClassName="tabs__item--selected"
-                data-cy="Tab"
-              >
-                {tab.title}
-              </Tab>
-            ))}
-          </TabList>
+      <Tabs selectedIndex={selectedIndex}>
+        <TabList>
+          {tabs.map(tab => (
+            <Tab key={tab.id} data-cy="Tab" selectedClassName="is-active">
+              <Link to={`/tabs/${tab.id}`}>{tab.title}</Link>
+            </Tab>
+          ))}
+        </TabList>
 
-          {isTabSelected ? (
-            <>
-              {tabs.map(tab => (
-                <TabPanel key={tab.id} className="tabs__panel">
-                  {tab.content}
-                </TabPanel>
-              ))}
-            </>
-          ) : (
-            <div className="tabs__content-placeholder">Please select a tab</div>
-          )}
-        </Tabs>
-      ) : (
-        <p>No tabs available.</p>
-      )}
+        {foundTabIndex === -1 ? (
+          <div data-cy="TabContent">Please select a tab</div>
+        ) : (
+          tabs.map(tab => (
+            <TabPanel key={tab.id}>
+              <div data-cy="TabContent">{tab.content}</div>
+            </TabPanel>
+          ))
+        )}
+      </Tabs>
     </div>
   );
 };
